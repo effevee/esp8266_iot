@@ -64,6 +64,7 @@ Serial download|0|1|0
 ## IoT Dev Board Sourcecode
 
 The code will show the following information on the OLED display:
+- Day of week
 - Date
 - Time
 - Temperature (°C)
@@ -78,7 +79,7 @@ The code will show the following information on the OLED display:
 #### Sourcecode
 The [sourcecode](source/micropython/esp8266_dht11_oled.py) consists of the following functions:
 - **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 6 hours to adjust the RTC.
-- **measureDHT** :The DHT11 temperature and humidity is mesaured every 5 seconds.
+- **measureDHT** : The DHT11 temperature and humidity is measured every 5 seconds.
 - **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every second.
 
 *Due to the different intervals of these 3 functions of the program, an asynchronous approch was used when coding (module asyncio)*
@@ -100,7 +101,7 @@ Upload the sourcecode as ```boot.py``` to the IoT Dev Board and press the reset 
 
 ![IoT Dev Board MicroPython Output](images/geekcreit_ESP8266_iot_dev_board_micropython.jpg)
 
-### Arduino Code
+### Arduino
 
 #### Preparation
 - Download the [latest Arduino IDE](https://www.arduino.cc/en/Main/Software) for you OS and install it.
@@ -108,7 +109,7 @@ Upload the sourcecode as ```boot.py``` to the IoT Dev Board and press the reset 
 - Go to Tools > Board > Boards Manager…
 - Search for **ESP8266** and press install button for the **ESP8266 by ESP8266 Community** boards.
 
-#### Code
+#### Sourcecode
 The code uses the following libraries:
 - wire
 - ...
