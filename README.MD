@@ -77,7 +77,7 @@ The code will show the following information on the OLED display:
 - [Install](http://docs.micropython.org/en/latest/esp8266/tutorial/intro.html#deploying-the-firmware) the firmware onto the IoT Dev Board 
 
 #### Sourcecode
-The [sourcecode](source/micropython/esp8266_dht11_oled.py) consists of the following functions:
+The [sourcecode](sourcecode/micropython/esp8266_dht11_oled.py) consists of the following functions:
 - **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 6 hours to adjust the RTC.
 - **measureDHT** : The DHT11 temperature and humidity is measured every 5 seconds.
 - **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every second.
