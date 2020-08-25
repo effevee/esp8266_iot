@@ -61,7 +61,7 @@ Mode|GPIO 0|GPIO 2|GPIO 15
 Program operation|1|1|0
 Serial download|0|1|0
 
-## IoT Dev Board Code
+## IoT Dev Board Sourcecode
 
 The code will show the following information on the OLED display:
 - Date
@@ -69,14 +69,22 @@ The code will show the following information on the OLED display:
 - Temperature (°C)
 - Humidity (%)
 
-### Micropython Code
+### Micropython
 
 #### Preparation
 - Download the [latest Micropython firmware](https://micropython.org/resources/firmware/esp8266-20191220-v1.12.bin)
 - [Install](http://docs.micropython.org/en/latest/esp8266/tutorial/intro.html#deploying-the-firmware) the firmware onto the IoT Dev Board 
 
-#### Code
-The [code](source/micropython/esp8266_dht11_oled.py) uses the following modules:
+#### Sourcecode
+The [sourcecode](source/micropython/esp8266_dht11_oled.py) consists of the following functions:
+- **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 6 hours to adjust the RTC.
+- **measureDHT** :The DHT11 temperature and humidity is mesaured every 5 seconds.
+- **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every second.
+
+*Due to the different intervals of these 3 functions of the program, an asynchronous approch was used when coding (module asyncio)*
+
+
+These are the modules that were used:
 Module|Description|Installation
 :-----:|:-------------:|-------------
 machine|hardware related functions|(builtin)
@@ -87,7 +95,8 @@ dht|functions for DHTxx sensors|(builtin)
 ssd1306|functions for oled displays|import upip; upip.install('micropython-ssd1306')
 uasyncio|asynchronous I/O scheduler|import upip; upip.install('micropython-uasyncio'); upip.install('micropython-uasyncio.synchro'); upip.install('micropython-uasyncio.queues')
 
-Upload the code as **boot.py** to the IoT Dev Board and press the reset button. The following is shown on the OLED display:
+
+Upload the sourcecode as ```boot.py``` to the IoT Dev Board and press the reset button. The following is shown on the OLED display:
 
 ![IoT Dev Board MicroPython Output](images/geekcreit_ESP8266_iot_dev_board_micropython.jpg)
 

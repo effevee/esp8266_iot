@@ -75,7 +75,7 @@ async def updateRTC():
             print('Wifi error: ', E)
 
 
-# coroutine DHT11 measurement
+# coroutine to do DHT11 measurement
 async def measureDHT():
     dht_interval = 5 # seconds
     # loop
@@ -92,7 +92,7 @@ async def measureDHT():
         await asyncio.sleep(dht_interval)
     
 
-# coroutine refresh OLED display
+# coroutine to refresh OLED display
 async def refreshOLED():
     oled_interval = 1 # second
     # loop
