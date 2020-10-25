@@ -78,7 +78,9 @@ The code will show the following information on the OLED display:
 
 #### Sourcecode
 The [sourcecode](sourcecode/micropython/esp8266_dht11_oled.py) consists of the following functions:
-- **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 6 hours to adjust the RTC.
+- **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 2 hours to adjust the RTC.
+- **DSTtime** : The local time is adjusted with the Daylight Savings Time. Belgium is used as an example in this code. The standard local time is GMT+1H for the period of the last Sunday of October till the last Sunday of March, then the Daylight Savings Time becomes GMT+2H.
+
 - **measureDHT** : The DHT11 temperature and humidity is measured every 5 seconds.
 - **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every second.
 
