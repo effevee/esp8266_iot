@@ -2,7 +2,7 @@
 
 Geekcreit® ESP8266 IoT Development Board + DHT11 Temperature and Humidity Sensor + Yellow Blue OLED Display
  - connect to Wifi
- - fetch the UTC date & time from an NTP server every 6 hours
+ - fetch the UTC date & time from an NTP server every 2 hours
  - update the ESP8266 RTC with the correct local time
  - measure temperature and humidity every 5 seconds
  - show temperature, humidity, date and time on the OLED display every second
@@ -26,7 +26,6 @@ SDA_GPIO = 2
 OLED_WIDTH = 128
 OLED_HEIGHT = 64
 OLED_ADDR = 0x3C
-GMT_DST = 2     # localtime = GMT + GMT_DST hours (ex. GMT+2)
 DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 DEBUG = True
 
@@ -40,7 +39,7 @@ class myGlobals:
 
 # coroutine to update RTC with UTC time from ntp server
 async def updateRTC():
-    ntp_interval = 6 * 60 * 60 # seconds
+    ntp_interval = 2 * 60 * 60 # seconds
     wlan = None
     # loop
     while True:
@@ -62,7 +61,7 @@ async def updateRTC():
             if wlan.isconnected():
                 print('network config:', wlan.ifconfig())
                 # set UTC time from ntpserver into RTC
-                await asyncio.sleep_ms(500)
+                await asyncio.sleep_ms(2000)
                 ntptime.settime()
                 # disconnect Wifi
                 wlan.disconnect()
@@ -92,19 +91,46 @@ async def measureDHT():
         await asyncio.sleep(dht_interval)
     
 
+# routine to correct localtime with Daylight Savings Time
+# Belgium Standard Time = GMT+1H - Daylight Savings Time = GMT+2H
+# Change dates/times :
+#    GMT+1H : Last Sunday October 02:00
+#    GMT+2H : Last Sunday March 03:00
+def DSTtime():
+    # current year
+    year = utime.localtime()[0]
+    # last Sunday March
+    HHMarch = utime.mktime((year, 3, (31-(int(5*year/4+4))%7), 2, 0, 0, 0, 0))
+    # last Sunday October
+    HHOctober = utime.mktime((year, 10, (31-(int(5*year/4+1))%7), 3, 0, 0, 0, 0))
+    # current time
+    curtime = utime.time()
+    # correct local time
+    if curtime < HHMarch:
+        # before last Sunday of March -> GMT+1H
+        dst = utime.localtime(curtime + 3600)
+    elif curtime < HHOctober:
+        # before last Sunday of October -> GMT+2H
+        dst = utime.localtime(curtime + 7200)
+    else:
+        # after last Sunday of October -> GMT+1H
+        dst = utime.localtime(curtime + 3600)
+    # save local time
+    myGlobals.now = dst
+    return dst
+
+
 # coroutine to refresh OLED display
 async def refreshOLED():
     oled_interval = 1 # second
     # loop
     while True:
-        # get local time corrected with Daylight Savings Time/Summer Time
-        lt = utime.localtime(utime.mktime(utime.localtime()) + GMT_DST*3600)
-        # save localtime in global vars
-        myGlobals.now = lt
+        # get corrected local time
+        year, month, day, hour, minute, second, dayofweek, dayofyear = DSTtime()
         # format strings to be displayed
         line1 = 'Temp {:2d}C Hum {:2d}%'.format(myGlobals.temp, myGlobals.hum)
-        line2 = DOW[int(lt[6])] + ' {:02d}/{:02d}/{:04d}'.format(lt[2], lt[1], lt[0])
-        line3 = '    {:02d}:{:02d}:{:02d}'.format(lt[3], lt[4], lt[5])
+        line2 = DOW[dayofweek] + ' {:02d}/{:02d}/{:04d}'.format(day, month, year)
+        line3 = '    {:02d}:{:02d}:{:02d}'.format(hour, minute, second)
         # show info on oled
         oled.fill(0)
         oled.text(line1, 0, 0)
