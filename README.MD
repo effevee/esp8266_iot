@@ -98,7 +98,8 @@ dht|functions for DHTxx sensors|(builtin)
 ssd1306|functions for oled displays|import upip; upip.install('micropython-ssd1306')
 uasyncio|asynchronous I/O scheduler|import upip; upip.install('micropython-uasyncio'); upip.install('micropython-uasyncio.synchro'); upip.install('micropython-uasyncio.queues')
 
-#### Upload sourcecode
+#### Upload
+
 Upload the sourcecode as ```boot.py``` to the IoT Dev Board and press the reset button. The following is shown on the OLED display:
 
 ![IoT Dev Board MicroPython Output](images/geekcreit_ESP8266_iot_dev_board_micropython.jpg)
@@ -111,12 +112,13 @@ Upload the sourcecode as ```boot.py``` to the IoT Dev Board and press the reset 
 - Go to Tools > Board > Boards Manager…
 - Search for **ESP8266** and press install button for the **ESP8266 by ESP8266 Community** boards.
 
+*Due to the different intervals of the 3 main functions of the program, a non blocking delay approch was used using millis()*
 #### Sourcecode
 
 The [sourcecode](sourcecode/arduino/esp8266_dht_oled.ino) consists of the following functions:
 
 - **setup** : contains initialisation code for Serial Monitor, DHT11 sensor, I2C and OLED display. It also connects to your Wi-Fi network, initialises the NTP client and sets the Daylight Saving Time offset.
-- **loop** : contains code for scheduling connection to the ntp server to adjust the current date and time, measurement of temperature and humidity with the DHT11 senwor and refreshing the OLED display.
+- **loop** : contains code for scheduling connection to the ntp server to adjust the current date and time, measurement of temperature and humidity with the DHT11 sensor and refreshing the OLED display.
 - **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 2 hours to adjust the RTC.
 - **measureDHT** : The DHT11 temperature and humidity is measured every 5 seconds.
 - **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every second.
@@ -133,9 +135,10 @@ WifiManager|Tzapu,Tablatronix|Sketch > Use Library > Library Manager
 NtpClient|Fabrice Weinberg|Sketch > Use Library > Library Manager
 Time|Paul Stoffregen|Download zip from https://github.com/PaulStoffregen/Time then Sketch > Use Library > Add Zip Library 
 
-#### Upload sourcecode
+#### Upload
+
 Select Tools > Board > ESP8266 Boards > Generic ESP8266 Module
 Select Tools > Port > (usb port of IoT module)
-Upload the sourcecode to the IoT Dev Board by pressing the upload button. After upload the board is reset an the following is shown on the OLED display:
+Upload the sourcecode to the IoT Dev Board by pressing the upload button. After upload the board is reset and the following is shown on the OLED display:
 
 ![IoT Dev Board MicroPython Output](images/geekcreit_ESP8266_iot_dev_board_arduino.jpg)
