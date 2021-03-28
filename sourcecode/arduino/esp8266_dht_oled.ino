@@ -149,8 +149,8 @@ void updateRTC() {
   int Day = ptm->tm_mday;
   int Month = ptm->tm_mon+1;
   int Year = ptm->tm_year+1900;
-  // int dayofweek = ptm->tm_wday;
-  
+  int dayofweek = ptm->tm_wday;
+
   // set system date and time in RTC
   setTime(Hour, Minute, Second, Day, Month, Year);
 }
@@ -177,14 +177,27 @@ void measureDHT() {
 //------------------------------------------------------------------------------------------------------------
 
 void refreshOLED() {
+  int Hour;
+  
   Serial.println("Refreshing OLED display");
   
   // get current date and time from RTC
   time_t cdt = now();
   
+  // correction for Daylight Saving Time +1 hr
+  // starting from last Sunday of March at 2:00
+  // ending at last Sunday of October at 3:00
+  if (isDstEurope(day(cdt), month(cdt), weekday(cdt), hour(cdt)))
+  {
+    Hour = hour(cdt) + 1;
+  }
+  else {
+    Hour = hour(cdt);
+  }
+
   // format date and time strings
   String currentDate = DOW[weekday(cdt)-1] + " " + twoDigits(day(cdt)) + "/" + twoDigits(month(cdt)) + "/" + year(cdt);
-  String currentTime = twoDigits(hour(cdt)) + ":" + twoDigits(minute(cdt)) + ":" + twoDigits(second(cdt));
+  String currentTime = twoDigits(Hour) + ":" + twoDigits(minute(cdt)) + ":" + twoDigits(second(cdt));
     
   // clear display
   display.clearDisplay();
@@ -220,4 +233,108 @@ String twoDigits(int digits) {
   else {
     return String(digits);
   }
+}
+
+// ---------------------------
+// isDstEurope
+// ---------------------------
+// Uses the normal local time (winter time) to determine
+// if the daylight saving is active.
+//
+// In Europe, the summer time (+1 hour) starts at
+// the last Sunday of March. At 02:00 (am) the clock
+// jumps to 03:00 (am).
+// The end if the summer time is at the last Sunday
+// of October. At 03:00 (am) the clock jumps back
+// to 02:00 (am).
+// When the winter time is the base, it means that the DST
+// becomes active at 02:00 (winter time) but also inactive at 02:00 (winter time).
+//
+// The parameters are the winter time, don't use the summertime for them.
+// day   : 1...31
+// month : 1...12
+// dow   : 1...7    1 = Sunday
+// hour  : 0...23
+// 
+// Returns:
+//       boolean that indicates that an hour should be added.
+//       Note that this is not an increment of the hour, but
+//       everything advances an hour into the future.
+//
+boolean isDstEurope( int day, int month, int dow, int hour)
+{
+  boolean dst = false;
+ 
+  // day 1...31, dow 1...7
+  // calculate the current or previous Sunday of this month.
+  // the result could be negative, which is no problem.
+ 
+  int previousSunday = day - (dow - 1);
+ 
+  // The range for a switch-case statement is a non-standard 'c' usage !
+  switch( month)
+  {
+  case 1 ... 2:
+    dst = false;
+    break;
+  case 3:
+    // The lowest day for sunday is 25, the highest is 31
+    if( previousSunday >= 25)
+    {
+      if( dow == 1)     // is it sunday right now ?
+      {
+        if( hour >= 2)
+        {
+          dst = true;   // dst starts at two in the night
+        }
+        else
+        {
+          dst = false;  // it is the right date, but not yet time
+        }
+      }
+      else
+      {
+        dst = true;     // it is past the last sunday
+      }
+    }
+    else
+    {
+      dst = false;      // the date is before the last sunday
+    }
+    break;
+  case 4 ... 9:
+    dst = true;
+    break;
+  case 10:
+    if( previousSunday >= 25)
+    {
+      if( dow == 1)     // is it sunday right now ?
+      {
+        if( hour < 2)
+        {
+          dst = true;   // dst stops at two in the night
+        }
+        else
+        {
+          dst = false;  // it is the right date, but beyond the DST
+        }
+      }
+      else
+      {
+        dst = false;     // it is past the last sunday
+      }
+    }
+    else
+    {
+      dst = true;      // the date is before the last sunday
+    }
+    break;
+  case 11 ... 12:
+    dst = false;
+    break;
+  default:
+    // wrong parameter for the month
+    dst = false;
+  } 
+  return dst;
 }
