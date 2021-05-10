@@ -13,7 +13,7 @@ The Geekcreit® ESP8266 IoT Development Board consist of :
 * IoT main board with ESP8266 Wifi module (ESP-12F)
 * 3 pin interface for DHT11 Temperature and Humidity sensor (included)
 * 4 pin I2C interface for 0.96" Yellow/Blue OLED module (included)
-* micro USB interface for power and communication
+* micro USB interface for power and communicationv
 
 ## IoT Dev Board Pin Layout 
 ![Geekcreit ESP8266 IoT Dev Board PCB](images/geekcreit_ESP8266_iot_dev_board_pcb.jpg)
@@ -79,10 +79,9 @@ The code will show the following information on the OLED display:
 #### Sourcecode
 The [sourcecode](sourcecode/micropython/esp8266_dht11_oled.py) consists of the following functions:
 
-- **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted by calling an NTP server on the Internet via Wifi. This process is executed every 2 hours to adjust the RTC. 
-- **DSTtime** : The local time is adjusted with the Daylight Savings Time. Belgium is used as an example in this code. The standard local time is GMT+1H for the period of the last Sunday of October till the last Sunday of March, then the Daylight Savings Time becomes GMT+2H.
+- **updateRTC** : The internal RTC of the ESP8266 is accurate enough to be used to get the date and time to be displayed. As the module contains no battery, the current date and time is adjusted to UTC by calling an NTP server on the Internet via Wifi. Then the RTC is updated to the correct localtime according to the Timezone and Daylight Saving Time options. This process is executed every 2 hours. 
 - **measureDHT** : The DHT11 temperature and humidity is measured every 5 seconds.
-- **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every second.
+- **refreshOLED** : The OLED display with day of week, date, time, temperature and humidity is refreshed every 15 seconds.
 
 *Due to the different intervals of the 3 main functions of the program, an asynchronous approch was used when coding (module asyncio)*
 
@@ -95,8 +94,11 @@ network|network configuration|(builtin)
 utime|time related functions|(builtin)
 ntptime|synchronize RTC with ntp|(builtin)
 dht|functions for DHTxx sensors|(builtin)
-ssd1306|functions for oled displays|import upip; upip.install('micropython-ssd1306')
-uasyncio|asynchronous I/O scheduler|import upip; upip.install('micropython-uasyncio'); upip.install('micropython-uasyncio.synchro'); upip.install('micropython-uasyncio.queues')
+ssd1306|functions for oled displays|(builtin)
+uasyncio|asynchronous I/O scheduler|(builtin)
+writer_minimal|writer for custom fonts on ssd1306 display|[Peter Hinch github](https://github.com/peterhinch/micropython-font-to-py)
+freesans20|custom font 20px for ssd1306 display|[Peter Hinch github](https://github.com/peterhinch/micropython-font-to-py)
+freesans30|custom font 30px for ssd1306 display|[Peter Hinch github](https://github.com/peterhinch/micropython-font-to-py)
 
 #### Upload
 
