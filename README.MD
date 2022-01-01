@@ -100,6 +100,8 @@ writer_minimal|writer for custom fonts on ssd1306 display|[Peter Hinch github](h
 freesans20|custom font 20px for ssd1306 display|[Peter Hinch github](https://github.com/peterhinch/micropython-font-to-py)
 freesans30|custom font 30px for ssd1306 display|[Peter Hinch github](https://github.com/peterhinch/micropython-font-to-py)
 
+If you get **Memory allocation failed errors** during execution of the Python script, this is probably caused by the heap memory being too fragmented to load the large freesans font files. An easy solution is to cross compile these files with the [MicroPython cross compiler](https://github.com/micropython/micropython/tree/master/mpy-cross). Then upload the much smaller .mpy files to your ESP8266 board and be sure to delete the .py versions. This will get rid of the memory errors.
+
 #### Upload
 
 Upload the sourcecode as ```boot.py``` to the IoT Dev Board and press the reset button. The following is shown on the OLED display:
