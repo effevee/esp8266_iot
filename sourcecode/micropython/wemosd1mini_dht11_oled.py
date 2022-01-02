@@ -14,13 +14,13 @@ Wemos D1 Mini + DHT11 Temperature and Humidity Sensor + 0.66" OLED Display
 
 from machine import Pin, I2C, RTC
 import network
-import config
+import config_wemos
 import ntptime
 import dht
 import ssd1306
 import uasyncio as asyncio
 import utime
-import freesans20
+import freesans15
 from writer_minimal import Writer
 
 
@@ -197,7 +197,7 @@ async def refreshOLED():
     oled = ssd1306.SSD1306_I2C(config.OLED_WIDTH, config.OLED_HEIGHT, i2c)
     
     # custom font writer object
-    font_writer20 = Writer(oled, freesans20)
+    font_writer15 = Writer(oled, freesans15)
 
     # loop
     while True:
@@ -209,14 +209,14 @@ async def refreshOLED():
         oled.fill(0)
         
         # show date
-        oled.text('{:02d}/{:02d}/{:04d}'.format(day, month, year), 25, 0)
+        oled.text('{:02d}/{:02d}/{:02d}'.format(day, month, year-2000), 0, 0)
         
         # show DOW and time
-        oled.text('{} {:02d}:{:02d}'.format(config.DOW[dayofweek], hour, minute),15, 20)
+        oled.text('{} {:02d}:{:02d}'.format(config.DOW[dayofweek], hour, minute), 0, 10)
             
         # show sensor readings
-        font_writer20.set_textpos(34, 0)
-        font_writer20.printstring('{:2d}C {:2d}%' .format(myGlobals.temp, myGlobals.hum))
+        font_writer15.set_textpos(25, 0)
+        font_writer15.printstring('{:2d}C {:2d}%' .format(myGlobals.temp, myGlobals.hum))
         
         # show info on oled
         oled.show()
