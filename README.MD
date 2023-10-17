@@ -147,3 +147,13 @@ Select Tools > Port > (usb port of IoT module)
 Upload the sourcecode to the IoT Dev Board by pressing the upload button. After upload the board is reset and the following is shown on the OLED display:
 
 ![IoT Dev Board MicroPython Output](images/geekcreit_ESP8266_iot_dev_board_arduino.jpg)
+
+# Update 17 Oct 2023 : Added Micropython code for Ideaspark ESP8266 0.96" OLED Board
+
+[Buy from Bangood](https://www.aliexpress.com/item/1005005242283189.html?spm=a2g0o.store_pc_home.0.0.724740d4ZmPy4b&pdp_npi=3%40dis%21EUR%21%E2%82%AC%204%2C80%21%E2%82%AC%204%2C56%21%21%21%21%21%40%2112000032335054938%21sh%21%21)
+
+![IdeaSpark_ESP8266_IoT](images/ideaspark_ESP8266_oled_dev_board.jpg)
+
+[micropython sourcecode](sourcecode/micropython/ideaspark_oled_dht11.py)
+
+![IoT Dev Board MicroPython Output](images/ideaspark_ESP8266_iot_dev_board_micropython.jpg)
